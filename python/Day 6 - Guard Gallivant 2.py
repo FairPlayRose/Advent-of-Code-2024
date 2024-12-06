@@ -1,6 +1,6 @@
 input = list()
 
-with open("input/day_06_test.txt", "r") as file:
+with open("input/day_06.txt", "r") as file:
     for line in file:
         input.append(line.rstrip())
 
@@ -15,6 +15,7 @@ for i, row in enumerate(input):
     for j, column in enumerate(row):
         if '^' == column:
             guard = (i,j)
+            input[i] = replacer(j, "X", input[i])
 
 direction = 'up'
 
@@ -78,22 +79,24 @@ while direction != 'gone':
     if len(last_3_guard_pos) == 3:
         last_4_guard_pos = list()
 
+        #print(last_3_guard_pos)
+
         # error here
         match last_3_guard_pos:
             case [((ty, tx), 'down'), ((sy, sx), 'left'), ((ly, lx), 'up')]:
-                virtual = ((ly, tx), 'right')
+                virtual = ((ty, lx), 'right')
                 last_3_guard_pos = [virtual, ((ty, tx), 'down'), ((sy, sx), 'left'), ((ly, lx), 'up')]
 
             case [((ty, tx), 'left'), ((sy, sx), 'up'), ((ly, lx), 'right')]:
-                virtual = ((ty, lx), 'down')
+                virtual = ((ly, tx), 'down')
                 last_3_guard_pos = [((ly, lx), 'right'), virtual, ((ty, tx), 'left'), ((sy, sx), 'up')]
 
             case [((ty, tx), 'up'), ((sy, sx), 'right'), ((ly, lx), 'down')]:
-                virtual = ((ly, tx), 'left')
+                virtual = ((ty, lx), 'left')
                 last_3_guard_pos = [((sy, sx), 'right'), ((ly, lx), 'down'), virtual, ((ty, tx), 'up')]
 
             case [((ty, tx), 'right'), ((sy, sx), 'down'), ((ly, lx), 'left')]:
-                virtual = ((ty, lx), 'up')
+                virtual = ((ly, tx), 'up')
                 last_3_guard_pos = [((ty, tx), 'right'), ((sy, sx), 'down'), ((ly, lx), 'left'), virtual]
             
             case [_, _, (_, 'gone')]:
@@ -102,44 +105,60 @@ while direction != 'gone':
             case _:
                 print('PANIC')
 
-        print(last_3_guard_pos)
-        ((tr_y,tr_x),_), ((br_y, br_x),_), ((bl_y,bl_x),_), ((tl_y, tl_x),_) = last_3_guard_pos
+        #print(last_3_guard_pos)
+        ((tl_y,tl_x),_), ((tr_y, tr_x),_), ((br_y,br_x),_), ((bl_y, bl_x),_) = last_3_guard_pos
 
-        right_line = [(input[i][tr_x] == '.' or input[i][tr_x] == 'X') for i in range(tr_y, br_y+1)]
-        left_line = [(input[i][tl_x] == '.' or input[i][tl_x] == 'X') for i in range(tl_y, bl_y+1)]
-        top_line = [(input[tl_y][i] == '.' or input[tl_y][i] == 'X') for i in range(tl_x, tr_x+1)]
-        bottom_line = [(input[bl_y][i] == '.' or input[bl_y][i] == 'X') for i in range(bl_x, br_x+1)]
-        #print(right_line, left_line, top_line, bottom_line)
+        top_line = [(input[tl_y][i] == '.' or input[tl_y][i] == 'X') for i in range(tl_x, tr_x + 1)] #Doing: top_line Range: range(tl_x, tr_x + 1) Fix: tl_y
+        right_line = [(input[i][tr_x] == '.' or input[i][tr_x] == 'X') for i in range(tr_y, br_y + 1)] #Doing: right_line Range: range(tr_y, br_y + 1) Fix: tr_x 
+        bottom_line = [(input[br_y][i] == '.' or input[br_y][i] == 'X') for i in range(tl_x, tr_x + 1)] #Doing: bottom_line Range: range(tl_x, tr_x + 1) Fix: br_y
+        left_line = [(input[i][tl_x] == '.' or input[i][tl_x] == 'X') for i in range(tr_y, br_y + 1)] #Doing: left_line Range: range(tr_y, br_y + 1) Fix: tl_x
+        
+        if 43 > block_counter > 40:
+            print(block_counter)
+            print(all(right_line + left_line + top_line + bottom_line))
 
         if not all(right_line + left_line + top_line + bottom_line):
             # (tr_y,tr_x + 1), (br_y + 1, br_x), (bl_y,bl_x - 1), (tl_y - 1, tl_x)
             continue
+
+        print(guard)
+        overline = ""
+        if 42 > block_counter > 40:
+            for i in range(130):
+                if i % 5 == 0:
+                    overline += '*'
+                else:
+                    overline += '|'
+            
+            print(overline)
+            
+            for n, line in enumerate(input):
+                print(line, " ", n)
         
         tr_blocked = (input[tr_y][tr_x + 1] == '.' or input[tr_y][tr_x + 1] == '#')
         br_blocked = (input[br_y + 1][br_x] == '.' or input[br_y + 1][br_x] == '#')
         bl_blocked = (input[bl_y][bl_x - 1] == '.' or input[bl_y][bl_x - 1] == '#')
         tl_blocked = (input[tl_y - 1][tl_x] == '.' or input[tl_y - 1][tl_x] == '#')
 
+        print(tr_blocked, br_blocked, bl_blocked, tl_blocked)
+
         if not all([tr_blocked, br_blocked, bl_blocked, tl_blocked]):
+            #print('here')
             continue
 
-        block_counter += 1    
+        block_counter += 1 
+        #print(block_counter)  
         
-        
-
-
     #print(direction)
     #for line in input:
     #    print(line)
     #print('\n')
 
-#for n, line in enumerate(input):
-#    print(line, " ", n)
 
 #counter = 0
 #for row in input:
 #    for column in row:
-#        if column == 'X' or column == "^":
+#        if column == 'X':
 #            counter += 1
 #
 #print(counter)
