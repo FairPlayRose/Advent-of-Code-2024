@@ -11,7 +11,7 @@ with open("input/day_07.txt", "r") as file:
 output = 0
 
 for n, items in enumerate(input):
-    print(n)
+    #print(n)
     target = int(items[0])
     items = items[1:]
 
