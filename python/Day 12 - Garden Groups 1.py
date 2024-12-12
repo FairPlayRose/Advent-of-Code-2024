@@ -1,88 +1,47 @@
 input: list[str] = list()
 
-with open("input/day_12_test.txt", "r") as file:
+with open("input/day_12.txt", "r") as file:
     for line in file:
         input.append([x for x in line.rstrip()])
 
-def areaSearch(exploration_list: list[tuple[str, tuple[int,int]]], field: list[str]) -> list[int]:
 
-    output = list()
+def plantAreas(plant: str, pos: tuple[int,int], field: list[str]) -> tuple[int,int, set[tuple[int,int]]]:
+    pos_y, pos_x = pos
 
-    area = 0
-    border = 0
-
-    dp = [(1,0), (0,1), (-1,0), (0,-1)]
-
-    current_plant, _ = exploration_list[0]
-
-    while exploration_list:
-        next_position = next(((plant, (pos_y, pos_x)) for plant, (pos_y, pos_x) in exploration_list if plant == current_plant), None)
-        if next_position == None:
-            output.append((current_plant, area, border))
-            area = 0
-            border = 0
-            next_position = next((plant, (pos_y, pos_x)) for plant, (pos_y, pos_x) in exploration_list)
-            current_plant, _ = next_position
-
-        exploration_list.remove(next_position)
+    if not pos_y in range(0, len(field)) or not pos_x in range(0, len(field)):
+        return (0,1,{}) #area, border
+    
+    if '#' == field[pos_y][pos_x]:
+        return (0,0,{})
         
-        plant, (pos_y, pos_x) = next_position
-
-        area += 1
-        for dy, dx in dp:
-            if not (pos_y+dy in range(0, len(field)) and pos_x+dx in range(0, len(field))):
-                border += 1
-                continue
-
-            plant = field[pos_y+dy][pos_x+dx]
-            if plant == '.':
-                continue
-            
-            if (plant, (pos_y+dy, pos_x+dx)) in exploration_list:
-                border += 1
-                continue
-            
-            exploration_list.append((plant, (pos_y+dy, pos_x+dx)))
-
-            if plant != current_plant:
-                border += 1
+    if plant != field[pos_y][pos_x]:
+        return (0,1,{}) #area, border
         
-        field[pos_y][pos_x] = '.'
 
-        print(next_position, area, border)
-        print(exploration_list)
+    new_pos = [(pos_y+dy,pos_x+dx) for dy, dx in [(1,0), (0,1), (-1,0), (0,-1)]]
 
-    return output
+    field[pos_y][pos_x] = '#'
 
-print(areaSearch([('R', (0,0))], input))
+    area, border = (1,0)
+    pos_set = {pos}
 
-plant_pos: dict[str:list[tuple[int,int]]] = dict()
+    for new in new_pos:
+        darea, dborder, dpos_set = plantAreas(plant, new, field)
+        area += darea
+        border += dborder
+        pos_set = pos_set.union(dpos_set)
+        
 
-for row, line in enumerate(input):
-    for column, plant in enumerate(line):
-        if plant in plant_pos:
-            plant_pos[plant].append((row,column))
-        else:
-            plant_pos[plant] = [(row,column)]
+    return (area, border, pos_set)
 
-#print(plant_pos["I"])
+check_sum = 0
 
-plant_line = dict()
+for i in range(len(input)):
+    for j in range(len(input)):
+        if input[i][j] != '.':
+            area, border, pos_set = plantAreas(input[i][j], (i,j), input)
+            check_sum += area*border
+            for pos_y, pos_x in pos_set:
+                input[pos_y][pos_x] = '.'
 
-#for key in plant_pos:
-#    for pos_y, pos_x in plant_pos[key]:
-#        plant_line[pos_y] =
-#        pass
-#    pass
-
-#def arearecurtion(pos_list: list[tuple[int,int]]) -> tuple[list[dict[str: int]], list[tuple[int,int]]]:
-#
-#
-#    dp = [(1,0), (0,1), (-1,0), (0,-1)]
-#    sy, sx = pos_list.pop(0)
-#
-#    for dy, dx in dp:
-#
-#        pass
-#
-#    return
+print(check_sum)
