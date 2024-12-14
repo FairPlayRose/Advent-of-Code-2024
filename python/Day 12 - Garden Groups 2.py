@@ -1,4 +1,5 @@
 from itertools import groupby
+from collections import defaultdict
 
 input: list[str] = list()
 
@@ -7,7 +8,7 @@ with open("input/day_12_test.txt", "r") as file:
         input.append([x for x in line.rstrip()])
 
 
-def plantAreas(plant: str, pos: tuple[int,int], field: list[str], direction: str) -> tuple[int,set[tuple[int,int]],set[tuple[int,int]]]:
+def plantAreas(plant: str, pos: tuple[int,int], field: list[str], direction: str) -> tuple[int,set[tuple[int,int]],set[tuple[int,int,str]]]:
     pos_y, pos_x = pos
 
     if not pos_y in range(0, len(field)) or not pos_x in range(0, len(field)):
@@ -45,14 +46,34 @@ def plantAreas(plant: str, pos: tuple[int,int], field: list[str], direction: str
 
     return (area, pos_set, border_set)
 
-def detect_range(pos: list[tuple[int,int]]):
-    pos_ys = [y for _,y in pos]
-    for i, j in groupby(enumerate(pos_ys), lambda x: x[1] - x[0]):
+def detect_range(pos: list[int]):
+    for i, j in groupby(enumerate(pos), lambda x: x[1] - x[0]):
         j = list(j)
         yield j[0][1], j[-1][1]
 
 area, pos_set, border_set = plantAreas('R', (0,0), input, '')
-border_list = list(border_set)
-border_list.sort()
-print(border_list)
 
+groups = defaultdict(list)
+
+#print(border_set)
+
+sideborders = list()
+topbotborders = list()
+
+for border in border_set:
+    groups[border[2]].append(border)
+    y, x, b_type = border
+    if b_type == '|':
+        sideborders.append((y,x))
+    if b_type == '-':
+        topbotborders.append((y,x))
+
+print(sorted(sideborders, key=lambda x: (x[1], x[0])))
+#print(sorted(topbotborders))
+
+sideborders = list(detect_range([y for y,_ in sorted(sideborders, key=lambda x: (x[1], x[0]))]))
+#topbotborders = list(detect_range([x for _,x in sorted(topbotborders)]))
+
+print(sideborders)
+#print(topbotborders)
+print(dict(groups))
