@@ -68,12 +68,37 @@ for border in border_set:
     if b_type == '-':
         topbotborders.append((y,x))
 
-print(sorted(sideborders, key=lambda x: (x[1], x[0])))
+print(dict(groups))
+
+sorted_sides = sorted(sideborders, key=lambda x: (x[1], x[0]))
+sorted_topbot = sorted(topbotborders)
+
+[x for _, xs in groupby(sorted_sides, lambda x: x[1]) for x in xs]
+
+grouped_sides = [list(x) for _, x in groupby(sorted_sides, lambda x: x[1])] #list(groupby(sorted_sides, lambda x: x[1]))
+grouped_topbot = [list(x) for _,x in groupby(sorted_topbot, lambda x: x[0])] #list(groupby(sorted_topbot, lambda x: x[0]))
+
+print(grouped_sides)
+print(grouped_topbot)
+
+
+#print(sorted(sideborders, key=lambda x: (x[1], x[0])))
 #print(sorted(topbotborders))
 
-sideborders = list(detect_range([y for y,_ in sorted(sideborders, key=lambda x: (x[1], x[0]))]))
-#topbotborders = list(detect_range([x for _,x in sorted(topbotborders)]))
+#test = groupby(sorted(sideborders, key=lambda x: (x[1], x[0])), lambda x: x[1])
+#for k,g in test:
+#    print(k, list(detect_range([y for y,_ in list(g)])))
+    
+#something = [list(detect_range([y for y,_ in list(g)])) for _,g in groupby(sorted(sideborders, key=lambda x: (x[1], x[0])), lambda x: x[1])]
+#print(something)
 
-print(sideborders)
-#print(topbotborders)
-print(dict(groups))
+#flat_list = [
+#    x
+#    for xs in something
+#    for x in xs
+#]
+
+#print(flat_list)
+
+#sideborders = list(detect_range([y for y,_ in sorted(sideborders, key=lambda x: (x[1], x[0]))]))
+#topbotborders = list(detect_range([x for _,x in sorted(topbotborders)]))
