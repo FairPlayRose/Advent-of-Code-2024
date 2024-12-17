@@ -1,16 +1,14 @@
 
 def combo(operand: str):
     trans = {'4': 'A', '5': 'B', '6':'C'}
-    return trans.get(operand, operand)
+    return trans.get(operand, operand) #get(item, default)
 
 def xor(op1: int, op2: int):
-    return op1 ^ op2
+    return op1 ^ op2 #xor operator
 
 def adv(operand: str, register: dict):
-    numerator = register['A']
-    denominator = 2 ** register[combo(operand)]
     
-    register['A'] = numerator // denominator
+    register['A'] = register['A'] >> register[combo(operand)]
     
     return register
 
@@ -36,18 +34,12 @@ def out(operand: str, register: dict, output_: list):
     return output_
 
 def bdv(operand: str, register: dict):
-    numerator = register['A']
-    denominator = 2 ** register[combo(operand)]
-    
-    register['B'] = numerator // denominator
+    register['B'] = register['A'] >> register[combo(operand)]
     
     return register
 
 def cdv(operand: str, register: dict):
-    numerator = register['A']
-    denominator = 2 ** register[combo(operand)]
-    
-    register['C'] = numerator // denominator
+    register['C'] = register['A'] >> register[combo(operand)]
     
     return register
 
