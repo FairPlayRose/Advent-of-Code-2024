@@ -54,7 +54,7 @@ def executer(machine: list[str]):
     registers = [int(res.split(' ')[-1]) for res in machine[:3]]
     registers = {'0': 0, '1': 1, '2': 2, '3': 3, 'A': registers[0], 'B': registers[1], 'C': registers[2]}
     program: list[str] = machine[-1].split(' ')[-1].split(',')
-    print(program)
+    #print(program)
 
     output = list()
     pointer = 0
@@ -65,7 +65,7 @@ def executer(machine: list[str]):
     while pointer < len(program)-1:
         opcode, operand = program[pointer:pointer+2]
         
-        #print(opcode, pointer)
+        #(opcode, pointer)
         
         instruction = {'0': adv,
                     '1': bxl,
@@ -87,47 +87,13 @@ def executer(machine: list[str]):
             
         #print(output)
             
-        print({k: registers[k] for k in ('A', 'B', 'C')})
-        print(program)
+        #print({k: registers[k] for k in ('A', 'B', 'C')})
+        #print(program)
     
     #print(''.join([str(x) for x in output]))
     
     registers = {k: registers[k] for k in ('A', 'B', 'C')}
     return registers, output
-
-test_string_1 = '''
-Register A: 0
-Register B: 2024
-Register C: 43690
-
-Program: 4,0
-'''
-
-test_string_2 = '''
-Register A: 2024
-Register B: 0
-Register C: 0
-
-Program: 6,1,5,5
-'''
-
-test_string_3 = '''
-Register A: 2024
-Register B: 0
-Register C: 0
-
-Program: 7,1,5,6
-'''
-
-test_string_4 = '''
-Register A: 2024
-Register B: 0
-Register C: 0
-
-Program: 7,1,5,6
-'''
-
-test_input = test_string_3.split('\n')[1:-1]
 
 registers, output = executer(input)
 
